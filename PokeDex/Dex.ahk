@@ -141,6 +141,7 @@ bestList(){
 pokemonMoveList(){
 	global foundMoveList := Map()
 	findMoves := []
+	findAbility := 0
 	If(DexMove1.text != ''){
 		findMoves.push(DexMove1.text)
 	}
@@ -154,7 +155,7 @@ pokemonMoveList(){
 		findMoves.push(DexMove4.text)
 	}
 	If(DexAbility.text != ''){
-		findMoves.push(DexAbility.text)
+		findAbility := 1
 	}
 
 	If((findMoves.length = 0)){
@@ -179,8 +180,12 @@ pokemonMoveList(){
 					}
 				}
 		} ;For}
-		If(checkMove.count = findMoves.length){
-			foundMoveList[monName] := checkMove[DexAbility.text] = 'HA' ? 1 : 0
+		If(checkMove.count = findMoves.length + findAbility){
+			If(findAbility){
+				foundMoveList[monName] := checkMove[DexAbility.text] = 'HA' ? 1 : 0
+			}Else{
+				foundMoveList[monName] := 0
+			}
 		}
 	}
 	text := ''
