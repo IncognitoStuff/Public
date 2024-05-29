@@ -158,7 +158,7 @@ pokemonMoveList(){
 		findAbility := 1
 	}
 
-	If((findMoves.length = 0)){
+	If((findMoves.length = 0) and (findAbility = 0)){
 		return
 	}
 	
@@ -739,6 +739,8 @@ initDex(){
 				aMove[sTemp] := aMove.has(sTemp) ? StrReplace(sort(StrReplace(aMove[sTemp],',','`n') '`n' 'Evolve' ,'u'),'`n',',') : 'Evolve'
 			}Else If(vRegEx[1] = 'special_moves'){
 				aMove[sTemp] := aMove.has(sTemp) ? StrReplace(sort(StrReplace(aMove[sTemp],',','`n') '`n' 'Special' ,'u'),'`n',',') : 'Special'
+			}Else If(vRegEx[1] = 'prevo_moves'){
+				;aMove[sTemp] := aMove.has(sTemp) ? StrReplace(sort(StrReplace(aMove[sTemp],',','`n') '`n' 'PreEvolution' ,'u'),'`n',',') : 'PreEvolution'
 			}Else{
 				aMove[sTemp] := aMove.has(sTemp) ? StrReplace(sort(StrReplace(aMove[sTemp],',','`n') '`n' vRegEx[1] ,'u'),'`n',',') : vRegEx[1]
 			}
