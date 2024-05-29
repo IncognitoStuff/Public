@@ -383,7 +383,17 @@ PokemonStats(){
 	text := mon '`n`n'
 	
 	text .= 'Abilities:' '`n`t'
-	text .= mDex[mon]['abilities'].count = 2 ? mDex[mon]['abilities']['1'] '`n`t'  mDex[mon]['abilities']['HA'] '`n' : mDex[mon]['abilities']['1'] '`n`t' mDex[mon]['abilities']['2'] '`n`t'  mDex[mon]['abilities']['HA'] ' (Hidden)`n'
+	
+	If(mDex[mon]['abilities'].count = 1){
+		text .= mDex[mon]['abilities']['1'] '`n'
+	}Else If((mDex[mon]['abilities'].count = 2) and mDex[mon]['abilities'].has('HA')){
+		text .= mDex[mon]['abilities']['1'] '`n`t'  mDex[mon]['abilities']['HA'] '`n'
+	}Else If((mDex[mon]['abilities'].count = 2)){
+		text .= mDex[mon]['abilities']['1'] '`n`t'  mDex[mon]['abilities']['2'] '`n'
+	}Else If((mDex[mon]['abilities'].count = 3)){
+		text .= mDex[mon]['abilities']['1'] '`n`t'  mDex[mon]['abilities']['2'] '`n`t'  mDex[mon]['abilities']['HA'] ' (Hidden)`n'
+	}
+	
 	
 	text .= 'Types:' '`n`t'
 	text .= mDex[mon]['types'].length = 1 ? mDex[mon]['types'][1] '`n' : mDex[mon]['types'][1] '`n`t' mDex[mon]['types'][2] '`n`n'
@@ -392,10 +402,10 @@ PokemonStats(){
 	text .= '`tHP:`t`t' mDex[mon]['stats']['hp'] '`n'
 	text .= '`tAttack:`t`t' mDex[mon]['stats']['attack'] '`n'
 	text .= '`tDefense:`t`t' mDex[mon]['stats']['defense'] '`n'
-	text .= '`tSp Attack:`t' mDex[mon]['stats']['sp_attack'] '`n'
+	text .= '`tSp Attack:`t`t' mDex[mon]['stats']['sp_attack'] '`n'
 	text .= '`tSp Defense:`t' mDex[mon]['stats']['sp_defense'] '`n'
 	text .= '`tSpeed:`t`t' mDex[mon]['stats']['speed'] '`n'
-	text .= '`tExp Base:`t' mDex[mon]['exp'] '`n`n'
+	text .= '`tExp Base:`t`t' mDex[mon]['exp'] '`n`n'
 	
 	text .= 'EV:`n'
 	For ii, value in mDex[mon]['EV']{
