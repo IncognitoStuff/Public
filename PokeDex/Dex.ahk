@@ -387,7 +387,7 @@ PokemonStats(){
 	If(mDex[mon]['abilities'].count = 1){
 		text .= mDex[mon]['abilities']['1'] '`n'
 	}Else If((mDex[mon]['abilities'].count = 2) and mDex[mon]['abilities'].has('HA')){
-		text .= mDex[mon]['abilities']['1'] '`n`t'  mDex[mon]['abilities']['HA'] '`n'
+		text .= mDex[mon]['abilities']['1'] '`n`t'  mDex[mon]['abilities']['HA'] ' (Hidden)`n'
 	}Else If((mDex[mon]['abilities'].count = 2)){
 		text .= mDex[mon]['abilities']['1'] '`n`t'  mDex[mon]['abilities']['2'] '`n'
 	}Else If((mDex[mon]['abilities'].count = 3)){
@@ -402,10 +402,10 @@ PokemonStats(){
 	text .= '`tHP:`t`t' mDex[mon]['stats']['hp'] '`n'
 	text .= '`tAttack:`t`t' mDex[mon]['stats']['attack'] '`n'
 	text .= '`tDefense:`t`t' mDex[mon]['stats']['defense'] '`n'
-	text .= '`tSp Attack:`t`t' mDex[mon]['stats']['sp_attack'] '`n'
+	text .= '`tSp Attack:`t' mDex[mon]['stats']['sp_attack'] '`n'
 	text .= '`tSp Defense:`t' mDex[mon]['stats']['sp_defense'] '`n'
-	text .= '`tSpeed:`t`t' mDex[mon]['stats']['speed'] '`n'
-	text .= '`tExp Base:`t`t' mDex[mon]['exp'] '`n`n'
+	text .= '`tSpeed:`t`t' mDex[mon]['stats']['speed'] '`n`n'
+	text .= '`tExp Base:`t' mDex[mon]['exp'] '`n`n'
 	
 	text .= 'EV:`n'
 	For ii, value in mDex[mon]['EV']{
@@ -698,6 +698,7 @@ initDex(){
 				continue
 			aTemp.push(vRegEx[1])
 		} ;Loop
+		
 		If(aTemp.length = 2){	;ingen hidden ability
 			abilities := aTemp[1] = aTemp[2] ? Map('1',aTemp[1]) : Map('1',aTemp[1],'2',aTemp[2])
 			abilityList .= aTemp[1] '`n' aTemp[2] '`n'
