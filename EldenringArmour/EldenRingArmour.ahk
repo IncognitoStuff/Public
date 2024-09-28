@@ -55,7 +55,7 @@ ArmourGui.Show()
 }
 
 ArmourGuiEscape(){
-	ArmourGui.Destroy()
+	ExitApp
 }
 
 CBChange(CBList,queryRegEx){
