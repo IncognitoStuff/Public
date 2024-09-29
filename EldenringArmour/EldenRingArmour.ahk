@@ -938,7 +938,7 @@ ArmourSearchFunc(minPoise,BGT){
 		removedNumser := 0
 		For iiN, nNavn in numOrderNumser{
 			;tooltip floor(((iiB*numOrderNumser.Length)/(numOrderBryster.Length*numOrderNumser.Length))*100) '%',0,0
-			If((Bryster[bNavn]['Poi'] + Numser[nNavn]['Poi'] + maxPoiseHatte + maxPoiseLuffer < minPoise) or (Bryster[bNavn]['Wgt'] + Numser[nNavn]['Wgt'] + minWeightHatte + minWeightLuffer > maxWeight)){
+			If((Bryster[bNavn]['Poi'] + Numser[nNavn]['Poi'] + maxPoiseHatte + maxPoiseLuffer < minPoise) or (Bryster[bNavn]['Poi'] / Bryster[bNavn]['Wgt'] < 2 ? (Bryster[bNavn]['Wgt'] + Numser[nNavn]['Wgt'] + minWeightHatte + minWeightLuffer > maxWeight) : 0)){
 				numOrderNumser.removeAt(iiN - removedNumser)
 				removedNumser += 1
 				continue
