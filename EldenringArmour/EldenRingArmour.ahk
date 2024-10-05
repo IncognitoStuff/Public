@@ -23,21 +23,24 @@ ArmourGui.Add('Text','xs10 y+10','Hands')
 global CBLuffer := ArmourGui.Add('ComboBox','xs45 y+-17 w200',CBLufferList)
 
 ArmourGui.Add('text','xm10 y+20 section','Min poise')
-minPoiseEdit := ArmourGui.Add('Edit','Number w32 x+5 ys-2','91')
+minPoiseEdit := ArmourGui.Add('Edit','Number w32 x+5 ys-2','61')
 BGTCBox := ArmourGui.Add('CheckBox','xs','Bull-Goat Talisman')
+ArmourGui.Add('text','xm130 ys','Number of results')
+global listLength := ArmourGui.Add('Edit','Number x+5 ys-2 w32',100)
+global DLCBox := ArmourGui.Add('CheckBox','x180 ys25 right','DLC armour')
 
 ArmourGui.Add('GroupBox','xm w260 h90 section','Sort by')
-global RWgt := ArmourGui.Add('Radio','xs10 ys20 cBlack checked','Weight')
-global RPhy := ArmourGui.Add('Radio','xs80 ys20 cGray','Physical Res')
+global RWgt := ArmourGui.Add('Radio','xs10 ys20 cBlack','Weight')
+global RPhy := ArmourGui.Add('Radio','xs80 ys20 cGray checked','Physical Res')
 global RMag := ArmourGui.Add('Radio','xs180 ys20 cBlue','Magic Res')
 global RFir := ArmourGui.Add('Radio','xs10 ys40 cRed','Fire Res')
 global RLit := ArmourGui.Add('Radio','xs80 ys40 cFFD42A','Lightning Res')
 global RHol := ArmourGui.Add('Radio','xs180 ys40 c808000','Holy Res')
 
 ArmourGui.Add('text','xs10 ys65','Weight with armour unequiped')
-global armourMinWgt := ArmourGui.Add('edit','x+5 ys62 w30','0')
+global armourMinWgt := ArmourGui.Add('edit','x+5 ys62 w30','22')
 ArmourGui.Add('text','x+5 ys65','/')
-global armourMaxWgt := ArmourGui.Add('edit','x+5 ys62 w30','200')
+global armourMaxWgt := ArmourGui.Add('edit','x+5 ys62 w30','77.6')
 
 
 ArmourGui.Add('Button','default xm10 section','Compile list').OnEvent('click', (*) => minPoiseEdit.value != '' ? (ArmourGui.Hide() ArmourSearchFunc(minPoiseEdit.value,BGTCBox.value)) : MsgBox('Input min poise value.'))	
@@ -79,9 +82,9 @@ ArmourSearchFunc(minPoise,BGT){
 	}else{
 		Try{
 			If(rollM){
-				maxWeight := (Number(StrReplace(trim(armourMaxWgt.value), ',', '.')) * 0.69999) - Number(StrReplace(trim(armourMinWgt.value), ',', '.'))
+				maxWeight := (Number(StrReplace(trim(armourMaxWgt.value), ',', '.')) * 0.70) - Number(StrReplace(trim(armourMinWgt.value), ',', '.'))
 			}else{
-				maxWeight := (Number(StrReplace(trim(armourMaxWgt.value), ',', '.')) * 0.29899) - Number(StrReplace(trim(armourMinWgt.value), ',', '.'))
+				maxWeight := (Number(StrReplace(trim(armourMaxWgt.value), ',', '.')) * 0.30) - Number(StrReplace(trim(armourMinWgt.value), ',', '.'))
 			}
 		}catch as Err{
 			MsgBox 'Weights not numbers'
@@ -822,55 +825,53 @@ ArmourSearchFunc(minPoise,BGT){
 	maxPoiseNumser := 28
 	maxPoiseHatte := 15
 	maxPoiseLuffer := 10
-
-	minWeightBryster := 2.4
-	minWeightNumser := 1.5
-	minWeightHatte := 0.7
-	minWeightLuffer := 0.8
-
 	If(CBBryster.value){
 		Bryster := Map(CBBryster.text,Bryster[CBBryster.text])
 		maxPoiseBryster := Bryster[CBBryster.text]['Poi']
-		minWeightBryster := Bryster[CBBryster.text]['Wgt']
 	}
 	If(CBNumser.value){
 		Numser := Map(CBNumser.text,Numser[CBNumser.text])
 		maxPoiseNumser := Numser[CBNumser.text]['Poi']
-		minWeightNumser := Numser[CBNumser.text]['Wgt']
 	}
 	If(CBHatte.value){
 		Hatte := Map(CBHatte.text,Hatte[CBHatte.text])
 		maxPoiseHatte := Hatte[CBHatte.text]['Poi']
-		minWeightHatte := Hatte[CBHatte.text]['Wgt']
 	}
 	If(CBLuffer.value){
 		Luffer := Map(CBLuffer.text,Luffer[CBLuffer.text])
 		maxPoiseLuffer := Luffer[CBLuffer.text]['Poi']
-		minWeightLuffer := Luffer[CBLuffer.text]['Wgt']
 	}
 
 	sortBryster := ''
 	sortNumser := ''
 	sortHatte := ''
 	sortLuffer := ''
+	minWeightBryster := 9000
+	minWeightNumser := 9000
+	minWeightHatte := 9000
+	minWeightLuffer := 9000
 	For bNavn, BMap in Bryster{
-		If(BMap['Poi'] + maxPoiseNumser + maxPoiseHatte + maxPoiseLuffer >= minPoise){
+		If((BMap['Poi'] + maxPoiseNumser + maxPoiseHatte + maxPoiseLuffer >= minPoise) and (BMap['DLC'] <= DLCBox.value)){
 			sortBryster .= BMap['Poi'] '`n'
+			minWeightBryster := BMap['Wgt'] < minWeightBryster ? BMap['Wgt'] : minWeightBryster
 		}
 	} ;For
 	For nNavn, NMap in Numser{
-		If(maxPoiseBryster + NMap['Poi'] + maxPoiseHatte + maxPoiseLuffer >= minPoise){
+		If((maxPoiseBryster + NMap['Poi'] + maxPoiseHatte + maxPoiseLuffer >= minPoise) and (NMap['DLC'] <= DLCBox.value)){
 			sortNumser .= NMap['Poi'] '`n'
+			minWeightNumser := NMap['Wgt'] < minWeightNumser ? NMap['Wgt'] : minWeightNumser
 		}
 	} ;For
 	For hNavn, HMap in Hatte{
-		If(maxPoiseBryster + maxPoiseNumser + HMap['Poi'] + maxPoiseLuffer >= minPoise){
+		If((maxPoiseBryster + maxPoiseNumser + HMap['Poi'] + maxPoiseLuffer >= minPoise) and (HMap['DLC'] <= DLCBox.value)){
 			sortHatte .= HMap['Poi'] '`n'
+			minWeightHatte := HMap['Wgt'] < minWeightHatte ? HMap['Wgt'] : minWeightHatte
 		}
 	} ;For
 	For lNavn, LMap in Luffer{
-		If(maxPoiseBryster + maxPoiseNumser + maxPoiseHatte + LMap['Poi'] >= minPoise){
+		If((maxPoiseBryster + maxPoiseNumser + maxPoiseHatte + LMap['Poi'] >= minPoise) and (LMap['DLC'] <= DLCBox.value)){
 			sortLuffer .= LMap['Poi'] '`n'
+			minWeightLuffer := LMap['Wgt'] < minWeightLuffer ? LMap['Wgt'] : minWeightLuffer
 		}
 	} ;For
 
@@ -878,7 +879,7 @@ ArmourSearchFunc(minPoise,BGT){
 	sortNumser := sort(sortNumser,'N R')
 	sortHatte := sort(sortHatte,'N R')
 	sortLuffer := sort(sortLuffer,'N R')
-
+	
 	numOrderBryster := []
 	numOrderNumser := []
 	numOrderHatte := []
@@ -887,7 +888,7 @@ ArmourSearchFunc(minPoise,BGT){
 		if(value = "")
 			continue
 		For bNavn, BMap in Bryster{
-			If((BMap['Poi'] = value) and (BMap['Sort'] = 0)){
+			If((BMap['Poi'] = value) and (BMap['Sort'] = 0) and (BMap['DLC'] <= DLCBox.value)){
 				numOrderBryster.push(bNavn)
 				BMap['Sort'] := 1
 				break
@@ -898,7 +899,7 @@ ArmourSearchFunc(minPoise,BGT){
 		if(value = "")
 			continue
 		For nNavn, NMap in Numser{
-			If((NMap['Poi'] = value) and (NMap['Sort'] = 0)){
+			If((NMap['Poi'] = value) and (NMap['Sort'] = 0 and (NMap['DLC'] <= DLCBox.value))){
 				numOrderNumser.push(nNavn)
 				NMap['Sort'] := 1
 				break
@@ -909,7 +910,7 @@ ArmourSearchFunc(minPoise,BGT){
 		if(value = "")
 			continue
 		For hNavn, HMap in Hatte{
-			If((HMap['Poi'] = value) and (HMap['Sort'] = 0)){
+			If((HMap['Poi'] = value) and (HMap['Sort'] = 0) and (HMap['DLC'] <= DLCBox.value)){
 				numOrderHatte.push(hNavn)
 				HMap['Sort'] := 1
 				break
@@ -920,14 +921,66 @@ ArmourSearchFunc(minPoise,BGT){
 		if(value = "")
 			continue
 		For lNavn, LMap in Luffer{
-			If((LMap['Poi'] = value) and (LMap['Sort'] = 0)){
+			If((LMap['Poi'] = value) and (LMap['Sort'] = 0) and (LMap['DLC'] <= DLCBox.value)){
 				numOrderLuffer.push(lNavn)
 				LMap['Sort'] := 1
 				break
 			}
 		} ;For
 	} ;For
-
+	
+	Loop {
+		listChanges := 0
+		toBeRemovedBryster := []
+		For iiB, bNavn in numOrderBryster{
+			If(Bryster[bNavn]['Wgt'] + minWeightNumser + minWeightHatte + minWeightLuffer > maxWeight){
+				toBeRemovedBryster.Push(iiB)
+				listChanges := 1
+			}
+		}
+		removed := 0
+		For ii, value in toBeRemovedBryster{
+			numOrderBryster.removeAt(value - removed)
+			removed += 1
+		}
+		toBeRemovedNumser := []
+		For iiN, nNavn in numOrderNumser{
+			If(minWeightBryster + Numser[nNavn]['Wgt'] + minWeightHatte + minWeightLuffer > maxWeight){
+				toBeRemovedNumser.Push(iiN)
+				listChanges := 1
+			}
+		}
+		removed := 0
+		For ii, value in toBeRemovedNumser{
+			numOrderNumser.removeAt(value - removed)
+			removed += 1
+		}
+		toBeRemovedHatte := []
+		For iiH, hNavn in numOrderHatte{
+			If(minWeightBryster + minWeightNumser + Hatte[hNavn]['Wgt'] + minWeightLuffer > maxWeight){
+				toBeRemovedHatte.Push(iiH)
+				listChanges := 1
+			}
+		}
+		removed := 0
+		For ii, value in toBeRemovedHatte{
+			numOrderHatte.removeAt(value - removed)
+			removed += 1
+		}
+		toBeRemovedLuffer := []
+		For iiL, lNavn in numOrderLuffer{
+			If(minWeightBryster + minWeightNumser + minWeightHatte + Luffer[lNavn]['Wgt'] > maxWeight){
+				toBeRemovedLuffer.Push(iiL)
+				listChanges := 1
+			}
+		}
+		removed := 0
+		For ii, value in toBeRemovedLuffer{
+			numOrderLuffer.removeAt(value - removed)
+			removed += 1
+		}
+	}until !listChanges ;Loop}
+	
 	armourMatch := Map()
 
 	For iiB, bNavn in numOrderBryster{
@@ -935,28 +988,46 @@ ArmourSearchFunc(minPoise,BGT){
 		If(Bryster[bNavn]['Wgt'] + minWeightNumser + minWeightHatte + minWeightLuffer > maxWeight){
 			continue
 		}
-		removedNumser := 0
+		toBeRemovedNumser := []
+		tempMinWeightNumser := 9000
 		For iiN, nNavn in numOrderNumser{
-			;tooltip floor(((iiB*numOrderNumser.Length)/(numOrderBryster.Length*numOrderNumser.Length))*100) '%',0,0
-			If((Bryster[bNavn]['Poi'] + Numser[nNavn]['Poi'] + maxPoiseHatte + maxPoiseLuffer < minPoise) or (Bryster[bNavn]['Poi'] / Bryster[bNavn]['Wgt'] < 2 ? (Bryster[bNavn]['Wgt'] + Numser[nNavn]['Wgt'] + minWeightHatte + minWeightLuffer > maxWeight) : 0)){
-				numOrderNumser.removeAt(iiN - removedNumser)
-				removedNumser += 1
+			If(iiN = numOrderNumser.length){
+				minWeightNumser := tempMinWeightNumser = 9000 ? Numser[nNavn]['Wgt'] : tempMinWeightNumser
+			}
+			If((Bryster[bNavn]['Poi'] + Numser[nNavn]['Poi'] + maxPoiseHatte + maxPoiseLuffer < minPoise)){
+				toBeRemovedNumser.Push(iiN)
 				continue
 			}
-			removedHatte := 0
+				
+			tempMinWeightNumser := Numser[nNavn]['Wgt'] < tempMinWeightNumser ? Numser[nNavn]['Wgt'] : tempMinWeightNumser
+				
+			toBeRemovedHatte := []
+			tempMinWeightHatte := 9000
 			For iiH, hNavn in numOrderHatte{
-				If(Bryster[bNavn]['Poi'] + maxPoiseNumser + Hatte[hNavn]['Poi'] + maxPoiseLuffer < minPoise){
-					numOrderHatte.removeAt(iiH - removedHatte)
-					removedHatte += 1
+				If(iiH = numOrderHatte.length){
+					minWeightHatte := tempMinWeightHatte = 9000 ? Hatte[hNavn]['Wgt'] : tempMinWeightHatte
+				}
+				If((Bryster[bNavn]['Poi'] + maxPoiseNumser + Hatte[hNavn]['Poi'] + maxPoiseLuffer < minPoise)){
+					toBeRemovedHatte.push(iiH)
 					continue
 				}
-				removedLuffer := 0
+				
+				tempMinWeightHatte := Hatte[hNavn]['Wgt'] < tempMinWeightHatte ? Hatte[hNavn]['Wgt'] : tempMinWeightHatte
+				
+				toBeRemovedLuffer := []
+				tempMinWeightLuffer := 9000
 				For iiL, lNavn in numOrderLuffer{
-					If(Bryster[bNavn]['Poi'] + maxPoiseNumser + maxPoiseHatte + Luffer[lNavn]['Poi'] < minPoise){
-						numOrderLuffer.removeAt(iiL - removedLuffer)
-						removedLuffer += 1
+					If(iiL = numOrderLuffer.length){
+						minWeightLuffer := tempMinWeightLuffer = 9000 ? Luffer[lNavn]['Wgt'] : tempMinWeightLuffer
+					}
+					If((Bryster[bNavn]['Poi'] + maxPoiseNumser + maxPoiseHatte + Luffer[lNavn]['Poi'] < minPoise)){
+						toBeRemovedLuffer.Push(iiL)
 						continue
-					}else If((Bryster[bNavn]['Poi'] + Numser[nNavn]['Poi'] + Hatte[hNavn]['Poi'] + Luffer[lNavn]['Poi'] >= minPoise) and (Bryster[bNavn]['Wgt'] + Numser[nNavn]['Wgt'] + Hatte[hNavn]['Wgt'] + Luffer[lNavn]['Wgt'] < maxWeight)){
+					}
+					
+					tempMinWeightLuffer := Luffer[lNavn]['Wgt'] < tempMinWeightLuffer ? Luffer[lNavn]['Wgt'] : tempMinWeightLuffer
+					
+					If((format('{:.2f}',Bryster[bNavn]['Poi'] + Numser[nNavn]['Poi'] + Hatte[hNavn]['Poi'] + Luffer[lNavn]['Poi']) >= minPoise) and (format('{:.2f}',Bryster[bNavn]['Wgt'] + Numser[nNavn]['Wgt'] + Hatte[hNavn]['Wgt'] + Luffer[lNavn]['Wgt']) <= maxWeight)){
 						matchPhy := format('{:.1f}',Bryster[bNavn]['Phy'] + Numser[nNavn]['Phy'] + Hatte[hNavn]['Phy'] + Luffer[lNavn]['Phy'])
 						matchMag := format('{:.1f}',Bryster[bNavn]['Mag'] + Numser[nNavn]['Mag'] + Hatte[hNavn]['Mag'] + Luffer[lNavn]['Mag'])
 						matchFir := format('{:.1f}',Bryster[bNavn]['Fir'] + Numser[nNavn]['Fir'] + Hatte[hNavn]['Fir'] + Luffer[lNavn]['Fir'])
@@ -981,7 +1052,7 @@ ArmourSearchFunc(minPoise,BGT){
 							For ii, value in armourMatch{
 								count += value.length
 							} ;For
-							If(count <= 100){
+							If(count <= listlength.value){
 								break
 							}
 							If(vSortBy = 'Wgt'){
@@ -999,8 +1070,23 @@ ArmourSearchFunc(minPoise,BGT){
 						} ;While
 					} ;If
 				} ;For
+				removed := 0
+				For ii, value in toBeRemovedLuffer{
+					numOrderLuffer.removeAt(value - removed)
+					removed += 1
+				}
 			} ;For
+			removed := 0
+			For ii, value in toBeRemovedHatte{
+				numOrderHatte.removeAt(value - removed)
+				removed += 1
+			}
 		} ;For
+		removed := 0
+		For ii, value in toBeRemovedNumser{
+			numOrderNumser.removeAt(value - removed)
+			removed += 1
+		}
 	} ;For
 	tooltip
 
